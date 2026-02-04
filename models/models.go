@@ -2,29 +2,24 @@ package models
 
 import "encoding/xml"
 
-type BodyPart struct {
-	Hediff  HediffDef
-	Thing   ThingDef
-	Install RecipeDef
-	Remove  RecipeDef
-}
-
 type HediffDef struct {
-	DefName    string `xml:"defName"`
-	ParentName string `xml:"ParentName,attr"`
+	XMLName    xml.Name `xml:"HediffDef"`
+	DefName    string   `xml:"defName"`
+	ParentName string   `xml:"ParentName,attr"`
 }
 
 type ThingDef struct {
-	DefName    string `xml:"defName"`
-	ParentName string `xml:"ParentName,attr"`
+	XMLName    xml.Name `xml:"ThingDef"`
+	DefName    string   `xml:"defName"`
+	ParentName string   `xml:"ParentName,attr"`
 }
 
 type RecipeDef struct {
-	DefName    string `xml:"defName"`
-	ParentName string `xml:"ParentName,attr"`
+	XMLName    xml.Name `xml:"RecipeDef"`
+	DefName    string   `xml:"defName"`
+	ParentName string   `xml:"ParentName,attr"`
 }
 
 type Defs struct {
-	XMLName xml.Name `xml:"Defs"`
-	defs    []BodyPart
+	Defs []any
 }
