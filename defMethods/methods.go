@@ -10,19 +10,17 @@ import (
 func CreateBodyPart() {
 	parts := []string{
 		"Eye",
-		"Leg",
-		"Arm",
 	}
 	defList := []any{}
 	for _, part := range parts {
-		stats := &models.StatOffsets{
+		stats := models.StatOffsets{
 			ConstructionSpeedFactor: 0.1,
 			MiningSpeed:             1.5,
 		}
-		props := &models.PartProps{
+		props := models.PartProps{
 			Solid: true,
 		}
-		caps := &models.CapMods{
+		caps := models.CapMods{
 			Capacities: []models.Capacity{
 				{
 					Capacity: "Sight",
@@ -34,32 +32,86 @@ func CreateBodyPart() {
 				},
 			},
 		}
-		stages := &models.Stages{
-			Stats:        *stats,
-			CapacityMods: *caps,
+		stages := models.Stages{
+			Stats:        stats,
+			CapacityMods: caps,
 		}
-		Hediff := &models.HediffDef{
-			DefName:               part,
-			ParentName:            "Makable",
-			Label:                 part,
-			LabelNoun:             "an " + part,
-			Description:           "An " + part + ", its a part of the body.",
-			DescriptionHyperlinks: part,
-			SpawnThingOnRemoved:   part,
-			AddedPartProps:        *props,
-			Stages:                *stages,
+		Hediff := models.HediffDef{
+			DefName:     part,
+			ParentName:  "Makable",
+			Label:       part,
+			LabelNoun:   "an " + part,
+			Description: "An installed" + part + ", its a part of the body.",
+			DescriptionHyperlinks: models.DescriptionHyperlinks{
+				ThingDef: []string{part},
+			},
+			SpawnThingOnRemoved: part,
+			AddedPartProps:      props,
+			Stages:              stages,
 		}
-		Thing := &models.ThingDef{
-			DefName:    part,
-			ParentName: "Makable",
+		Thing := models.ThingDef{
+			DefName:     part,
+			ParentName:  "Makable",
+			Label:       part,
+			Description: "The " + part + ", is a part of the body.",
+			DescriptionHyperlinks: models.DescriptionHyperlinks{
+				RecipeDef: []string{"Install" + part},
+			},
+			ThingSetMakerTags: "RewardStandardLowFreq",
+			CostList: models.CostList{
+				Plasteel:        15,
+				ComponentSpacer: 3,
+			},
 		}
-		Install := &models.RecipeDef{
-			DefName:    part,
-			ParentName: "Install",
+		Install := models.RecipeDef{
+			DefName:     "Install" + part,
+			ParentName:  "Install",
+			Label:       "Install " + part,
+			Description: "Install an " + part,
+			DescriptionHyperlinks: models.DescriptionHyperlinks{
+				HediffDef: []string{part},
+				ThingDef:  []string{part},
+			},
+			JobString: "installing " + part,
+			Ingredients: &models.Ingredients{
+				Ingredients: []models.Ingredient{
+					{
+						Filter: part,
+						Count:  1,
+					},
+					{
+						Filter: "Medicine",
+						Count:  100,
+					},
+				},
+			},
+			FixedIngredientFilter: &models.FixedIngredientFilter{
+				FixedIngredientFilter: []string{
+					part,
+					"medicine",
+				},
+			},
+			AppliedOnFixedBodyParts: &models.AppliedOnFixedBodyParts{
+				AppliedOnFixedBodyParts: "Eye",
+			},
+			AddsHediff:    part,
+			RemovesHediff: "",
 		}
-		Remove := &models.RecipeDef{
-			DefName:    part,
-			ParentName: "Remove",
+		Remove := models.RecipeDef{
+			DefName:     "Remove" + part,
+			Label:       "remove " + part,
+			Description: "Remove an " + part,
+			DescriptionHyperlinks: models.DescriptionHyperlinks{
+				ThingDef: []string{
+					part,
+				},
+				HediffDef: []string{
+					part,
+				},
+			},
+			Ingredients:   nil,
+			JobString:     "Removing " + part,
+			RemovesHediff: part,
 		}
 		defList = append(defList, Hediff, Thing, Install, Remove)
 	}
